@@ -3,6 +3,7 @@ const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
 const userRoute = require("./routes/user");
+const jobRoute = require("./routes/job");
 const dotenv = require("dotenv");
 dotenv.config();
 
@@ -22,6 +23,7 @@ app.get("/", (req, res) => {
 
 //userRoute
 app.use("/api/user", userRoute);
+app.use("/api/job", jobRoute);
 
 // listening on PORT
 app.listen(PORT, () => {

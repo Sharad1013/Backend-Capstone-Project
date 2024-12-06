@@ -4,10 +4,15 @@ const User = require("../schema/user.schema");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
+dotenv.config();
 
 //register route
 router.post("/register", async (req, res) => {
   const { name, email, password, mobile } = req.body;
+
+  if (!name || !email || !password || !mobile) {
+    return res.status(400).json({ message: "All credentials required!!" });
+  }
 
   const isUserExist = await User.findOne({ email });
   if (isUserExist) {
@@ -36,6 +41,9 @@ router.post("/register", async (req, res) => {
 //login route
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
+  if (!email || !password) {
+    return res.status(400).json({ message: "All credentials required!!" });
+  }
   const user = await User.findOne({ email });
   if (!user) {
     return res.status(400).json({ message: "Wrong username or password" });
@@ -47,10 +55,12 @@ router.post("/login", async (req, res) => {
   const payload = {
     id: user._id,
   };
-  // Remember you didn't add the JWT_SECRET on the deployment platform (render)
+
   const token = jwt.sign(payload, process.env.JWT_SECRET, {
     expiresIn: "1h",
   });
   res.status(200).json({ token });
 });
+
+
 module.exports = router;
