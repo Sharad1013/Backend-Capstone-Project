@@ -4,6 +4,8 @@ const app = express();
 const mongoose = require("mongoose");
 const userRoute = require("./routes/user");
 const jobRoute = require("./routes/job");
+const cors = require("cors");
+app.use(cors());
 const dotenv = require("dotenv");
 dotenv.config();
 
@@ -16,6 +18,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+
 // home route
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "try.html"));

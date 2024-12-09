@@ -61,8 +61,17 @@ router.post("/", authMiddleware, async (req, res) => {
 
 // find all jobs
 router.get("/", async (req, res) => {
-  //pagination, filtering
+  //pagination, filtering and searching
   const { limit, offset, salary, name, jobPosition, jobType, mode } = req.query;
+
+  // mongo query object
+  const query = {};
+  if (salary) {
+    query.salary = { $gte: salary, $lte: salary };
+  }
+  if (name) {
+    query.companyName = { $regex: name, $options: "i" };
+  }
   // get me jobs with salary between 200000 and 300000
   // const jobs = await Job.find({salary: {$gte: 200000, $lte: 300000}}).skip(offset).limit(limit);
 
@@ -79,12 +88,9 @@ router.get("/", async (req, res) => {
   //   .limit(limit);
 
   // jobs company name should contain name and salary = salary
-  const jobs = await Job.find({
-    companyName: { $regex: name, $options: "i" },
-    salary,
-  })
-    .skip(offset)
-    .limit(limit);
+  const jobs = await Job.find(query)
+    .skip(offset || 0)
+    .limit(limit || 10);
   res.status(200).json(jobs);
 });
 
