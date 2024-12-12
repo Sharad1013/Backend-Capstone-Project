@@ -90,7 +90,7 @@ router.get("/", async (req, res) => {
   // jobs company name should contain name and salary = salary
   const jobs = await Job.find(query)
     .skip(offset || 0)
-    .limit(limit || 10);
+    .limit(limit || 50);
   res.status(200).json(jobs);
 });
 
@@ -163,7 +163,7 @@ router.put("/:id", authMiddleware, async (req, res) => {
     });
     res.status(200).json({ message: "job Updated" });
   } catch (error) {
-    return res.status(401).json({ message: "Error in updating job" });
+    return res.status(500).json({ message: "Error in updating job" });
   }
 });
 
