@@ -91,7 +91,9 @@ router.get("/", async (req, res) => {
   const jobs = await Job.find(query)
     .skip(offset || 0)
     .limit(limit || 50);
-  res.status(200).json(jobs);
+
+  const count = await Job.countDocuments(query);
+  res.status(200).json({ jobs, count });
 });
 
 // find specific jobs --> read
