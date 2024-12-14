@@ -59,10 +59,19 @@ router.post("/", authMiddleware, async (req, res) => {
   }
 });
 
-// find all jobs
+// fetch all jobs
 router.get("/", async (req, res) => {
   //pagination, filtering and searching
-  const { limit, offset, salary, name, jobPosition, jobType, mode } = req.query;
+  const {
+    limit,
+    offset,
+    salary,
+    name,
+    jobPosition,
+    jobType,
+    mode,
+    skillsRequired,
+  } = req.query;
 
   // mongo query object
   const query = {};
@@ -71,6 +80,16 @@ router.get("/", async (req, res) => {
   }
   if (name) {
     query.companyName = { $regex: name, $options: "i" };
+  }
+  if (skillsRequired) {
+    // all skills must be in the skills array
+    // query.skillsRequired = { $all: skillsRequired.split(",") };
+    // atleast one skill must be in the skills array
+    // query.skillsRequired = { $in: skillsRequired.split(","), $options: "i" };
+    // made it a regex so that it remains caseinsensitive
+    query.skillsRequired = {
+      $in: skillsRequired.split(",").map((skill) => new RegExp(skill, "i")),
+    };
   }
   // get me jobs with salary between 200000 and 300000
   // const jobs = await Job.find({salary: {$gte: 200000, $lte: 300000}}).skip(offset).limit(limit);
